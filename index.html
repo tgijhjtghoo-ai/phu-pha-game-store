@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>phupha game store - ເວັບເຕີມເກມ ແລະ ຕື່ມເງິນອອນໄລນ໌</title>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("2Rr4eiGTv6nzu1xT0");
+        })();
+    </script>
+
+    <style>
+        * { box-sizing: border-box; font-family: sans-serif; margin: 0; padding: 0; }
+        body { background-color: #120303; color: #fff; padding: 20px; text-align: center; }
+        h1 { color: #ff3838; margin-bottom: 15px; text-shadow: 0 0 10px #ff3838; font-size: 28px; }
+        
+        .top-banner-single { display: flex; justify-content: center; margin-bottom: 25px; }
+        .top-banner-single img { width: 100%; max-width: 500px; height: auto; border-radius: 12px; border: 2px solid #ff3838; box-shadow: 0 5px 15px rgba(255, 56, 56, 0.3); }
+
+        .auth-bar { background: #220808; max-width: 450px; margin: 0 auto 20px auto; padding: 20px; border-radius: 12px; border: 1px solid #591c1c; }
+        .user-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .btn-auth { background: #ff3838; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; }
+        .btn-logout { background: #cc0000; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-admin-panel { background: #ff9f43; color: #120303; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; display: none; }
+
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .auth-tab { flex: 1; padding: 10px; background: #120303; border: 1px solid #591c1c; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .auth-tab.active { background: #ff3838; color: #fff; }
+
+        .btn-whatsapp { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: #fff; text-decoration: none; font-weight: bold; padding: 12px 20px; border-radius: 25px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4); font-size: 15px; }
+
+        .form-container { background: #220808; max-width: 450px; margin: 0 auto; padding: 25px; border-radius: 15px; display: none; text-align: left; border: 1px solid #591c1c; }
+        .form-container.active { display: block; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 6px; color: #ff6b6b; font-weight: bold; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #591c1c; background: #120303; color: #fff; font-size: 15px; outline: none; }
+
+        button.btn-submit { width: 100%; padding: 14px; background: linear-gradient(45deg, #ff0000, #b30000); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .status-box { background: #220808; max-width: 450px; margin: 15px auto; padding: 15px; border-radius: 12px; border: 1px solid #591c1c; text-align: left; display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>🔥 phupha game store 🔥</h1>
+    <p style="color: #ff6b6b; margin-bottom: 15px; font-weight: bold;">ປອດໄພ 100% | ເຕີມໄວ ທັນໃຈ</p>
+
+    <a href="https://wa.me/8562056581774" target="_blank" class="btn-whatsapp">💬 ທັກຫາແອດມິນ WhatsApp (020 56581774)</a>
+
+    <div class="auth-bar">
+        <div id="auth-logged-out">
+            <div class="auth-tabs">
+                <div id="tab-login" class="auth-tab active" onclick="switchAuthMode('login')">ເຂົ້າສູ່ລະບົບ</div>
+                <div id="tab-register" class="auth-tab" onclick="switchAuthMode('register')">ສະໝັກສະມາຊິກ</div>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="auth-username" placeholder="ຊື່ສະມາຊິກ (Username)">
+            </div>
+            <div id="gmail-group" class="form-group" style="display: none;">
+                <input type="email" id="auth-gmail" placeholder="Gmail">
+            </div>
+            <div class="form-group">
+                <input type="password" id="auth-password" placeholder="ລະຫັດຜ່ານ (Password)">
+            </div>
+
+            <button id="auth-btn" class="btn-auth" onclick="handleAuth()">ເຂົ້າສູ່ລະບົບ</button>
+        </div>
+
+        <div id="auth-logged-in" class="user-info" style="display: none; width: 100%;">
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span>👤 <b id="display-username" style="color: #ff6b6b;"></b></span><br>
+                    <span style="font-size: 14px; color: #ff3838;">💰 ຍອດເງິນ: <b id="display-balance">0</b> ກີບ</span>
+                </div>
+                <button class="btn-logout" onclick="logout()">ອອກ</button>
+            </div>
+            <button id="btn-admin" class="btn-admin-panel" onclick="openAdminPanel()">⚙️ ຈັດການລະບົບ (Admin Panel)</button>
+        </div>
+    </div>
+
+    <div id="status-panel" class="status-box">
+        <h3 style="color: #ff3838; font-size: 16px; margin-bottom: 8px;">🔔 ຂໍ້ຄວາມຈາກແອດມິນ:</h3>
+        <div id="status-message">ຍັງບໍ່ມີປະວັດການເຕີມ</div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-form" class="form-container">
+        <h2 style="margin-bottom: 15px; color: #ff9f43; text-align: center;">⚙️ ແອດມິນ: ຈັດການລະບົບ</h2>
+        
+        <div class="form-group">
+            <label>ຊື່ລູກຄ້າ (Username):</label>
+            <input type="text" id="admin-target-user" placeholder="ປ້ອນຊື່ Username ຂອງລູກຄ້າ">
+        </div>
+
+        <div class="form-group">
+            <label>1. ບວກຍອດເງິນໃຫ້ລູກຄ້າ (ກີບ):</label>
+            <input type="number" id="admin-add-amount" placeholder="ຕົວຢ່າງ: 50000">
+            <button class="btn-submit" style="background: #ff9f43; color: #120303;" onclick="adminApproveMoney()">✅ ຢືນຢັນບວກຍອດເງິນ</button>
+        </div>
+
+        <div class="form-group">
+            <label>2. 💬 ສົ່ງຂໍ້ຄວາມຫາລູກຄ້າ:</label>
+            <textarea id="admin-custom-msg" rows="3" placeholder="ພິມຂໍ້ຄວາມ..."></textarea>
+            <button class="btn-submit" style="background: #0088cc;" onclick="sendCustomMessageToUser()">📩 ສົ່ງຂໍ້ຄວາມຫາລູກຄ້າ</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ຄ່າຄອນຟິກ Firebase ຂອງທ່ານຖືກອັບເດດໃສ່ບ່ອນນີ້ແລ້ວ!
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbvRBH4NbnguojXr4RgoMUHAvwvKbg9-Q",
+            authDomain: "phupha-fdc24.firebaseapp.com",
+            databaseURL: "https://phupha-fdc24-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "phupha-fdc24",
+            storageBucket: "phupha-fdc24.firebasestorage.app",
+            messagingSenderId: "46457891160",
+            appId: "1:46457891160:web:6f3ed84e696ca890191d2d",
+            measurementId: "G-MKT9GTRSQV"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let authMode = 'login';
+        let currentUser = null;
+
+        window.switchAuthMode = function(mode) {
+            authMode = mode;
+            document.getElementById('tab-login').className = mode === 'login' ? 'auth-tab active' : 'auth-tab';
+            document.getElementById('tab-register').className = mode === 'register' ? 'auth-tab active' : 'auth-tab';
+            document.getElementById('gmail-group').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('auth-btn').innerText = mode === 'login' ? 'ເຂົ້າສູ່ລະບົບ' : 'ສະໝັກສະມາຊິກ';
+        };
+
+        window.handleAuth = async function() {
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const gmail = document.getElementById('auth-gmail').value.trim();
+
+            if(!username || !password) {
+                alert('❌ ກະລຸນາປ້ອນຂໍ້ມູນໃຫ້ຄົບ!');
+                return;
+            }
+
+            const dbRef = ref(db);
+
+            if(authMode === 'register') {
+                const snapshot = await get(child(dbRef, `users/${username}`));
+                if(snapshot.exists()) {
+                    alert('❌ ຊື່ສະມາຊິກນີ້ມີຜູ້ໃຊ້ແລ້ວ!');
+                    return;
+                }
+
+                await set(ref(db, 'users/' + username), {
+                    username: username,
+                    password: password,
+                    gmail: gmail,
+                    balance: 0,
+                    customMsg: ''
+                });
+
+                alert('✅ ສະໝັກສະມາຊິກ ສຳເລັດແລ້ວ!');
+                switchAuthMode('login');
+
+            } else {
+                const snapshot = await get(child(dbRef, `users/${username}`));
+                if(snapshot.exists() && snapshot.val().password === password) {
+                    currentUser = snapshot.val();
+                    listenUserData(username);
+                    
+                    document.getElementById('auth-logged-out').style.display = 'none';
+                    document.getElementById('auth-logged-in').style.display = 'flex';
+                    document.getElementById('display-username').innerText = username;
+                    document.getElementById('status-panel').style.display = 'block';
+
+                    if(username.toLowerCase() === 'phupha') {
+                        document.getElementById('btn-admin').style.display = 'block';
+                    }
+                    alert('🎉 ເຂົ້າສູ່ລະບົບສຳເລັດ!');
+                } else {
+                    alert('❌ ຊື່ ຫຼື ລະຫັດຜ່ານ ບໍ່ຖືກຕ້ອງ!');
+                }
+            }
+        };
+
+        function listenUserData(username) {
+            const userRef = ref(db, 'users/' + username);
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                if(data) {
+                    document.getElementById('display-balance').innerText = Number(data.balance || 0).toLocaleString();
+                    document.getElementById('status-message').innerText = data.customMsg || 'ຍັງບໍ່ມີປະວັດການແຈ້ງເຕືອນ';
+                }
+            });
+        }
+
+        window.adminApproveMoney = async function() {
+            const targetUser = document.getElementById('admin-target-user').value.trim();
+            const amount = parseInt(document.getElementById('admin-add-amount').value);
+
+            if(!targetUser || isNaN(amount)) {
+                alert('❌ ກະລຸນາປ້ອນຊື່ ແລະ ຈຳນວນເງິນ!');
+                return;
+            }
+
+            const snapshot = await get(child(ref(db), `users/${targetUser}`));
+            if(!snapshot.exists()) {
+                alert(`❌ ບໍ່ພົບຊື່ "${targetUser}" ໃນລະບົບ!`);
+                return;
+            }
+
+            const currentBalance = snapshot.val().balance || 0;
+            await update(ref(db, 'users/' + targetUser), {
+                balance: currentBalance + amount
+            });
+
+            alert(`✅ ບວກເງິນ ${amount.toLocaleString()} ກີບ ໃຫ້ "${targetUser}" ສຳເລັດ!`);
+            document.getElementById('admin-add-amount').value = '';
+        };
+
+        window.sendCustomMessageToUser = async function() {
+            const targetUser = document.getElementById('admin-target-user').value.trim();
+            const msg = document.getElementById('admin-custom-msg').value.trim();
+
+            if(!targetUser || !msg) {
+                alert('❌ ກະລຸນາປ້ອນຊື່ ແລະ ຂໍ້ຄວາມ!');
+                return;
+            }
+
+            const snapshot = await get(child(ref(db), `users/${targetUser}`));
+            if(!snapshot.exists()) {
+                alert(`❌ ບໍ່ພົບຊື່ "${targetUser}" ໃນລະບົບ!`);
+                return;
+            }
+
+            await update(ref(db, 'users/' + targetUser), {
+                customMsg: msg
+            });
+
+            alert(`📩 ສົ່ງຂໍ້ຄວາມຫາ "${targetUser}" ສຳເລັດ!`);
+            document.getElementById('admin-custom-msg').value = '';
+        };
+
+        window.openAdminPanel = function() { document.getElementById('admin-form').classList.add('active'); };
+        window.logout = function() { location.reload(); };
+    </script>
+</body>
+</html>
