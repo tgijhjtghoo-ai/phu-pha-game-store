@@ -1,0 +1,12 @@
+{
+  "background_color": "#650000",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "phupha game store",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "phupha game store",
+  "start_url": "/",
+  "theme_color": "rgb(0, 0, 0)",
+  "description": "ເວັບເຕີມເກມ ແລະຊື້ໄອດີ Roblox ປອດໄພ"
+}
